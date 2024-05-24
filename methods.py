@@ -13,9 +13,7 @@ def YTdownload(id, link):
 
         return False
 
-    mp4_streams = yt.streams.filter(file_extension='mp4').all()
-
-    d_video = yt.streams.get_by_itag(22)
+    d_video = yt.streams.filter(progressive=True, file_extension="mp4").order_by('resolution').desc().first()
 
     try: 
         d_video.download(output_path=SAVE_PATH)
@@ -80,7 +78,7 @@ def edit_video(id, cutSilence, ratio, speedup, music):
 
         filename = f'{id}-done'
     
-    '''
+    
     
     if cutSilence and speedup:
         os.remove(f'{id}_ALTERED_ALTERED.mp4')
@@ -89,7 +87,7 @@ def edit_video(id, cutSilence, ratio, speedup, music):
         os.remove(f'{id}_ALTERED.mp4')
         
     os.remove(f'{id}.mp4')
-'''
+
     return f'{filename}.mp4'
     
 
