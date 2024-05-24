@@ -43,14 +43,14 @@ def edit_video(id, cutSilence, ratio, speedup, music):
     if cutSilence:
         os.system(f"auto-editor {filename}.mp4 --edit audio:threshold=-19dB")
 
-        filename = f"{filename}_ALTERED.mp4"
+        filename = f"{filename}_ALTERED"
 
     if speedup:
         clip = mpy.VideoFileClip(f'{filename}.mp4')
         duration = clip.duration 
         os.system(f"auto-editor {filename}.mp4 --video-speed {(duration/60)} --silent-speed 99999")
 
-        filename = f"{filename}_ALTERED.mp4"
+        filename = f"{filename}_ALTERED"
         
     if ratio:
         clip = mpy.VideoFileClip(f'{filename}.mp4')
@@ -80,12 +80,6 @@ def edit_video(id, cutSilence, ratio, speedup, music):
     
     
     
-    if cutSilence and speedup:
-        os.remove(f'{id}_ALTERED_ALTERED.mp4')
-        os.remove(f'{id}_ALTERED.mp4')
-    elif cutSilence or speedup:
-        os.remove(f'{id}_ALTERED.mp4')
-        
     os.remove(f'{id}.mp4')
 
     return f'{filename}.mp4'
