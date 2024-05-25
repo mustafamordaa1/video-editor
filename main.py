@@ -6,7 +6,7 @@ from methods import edit_video, YTdownload, cut_video
 
 
 async def hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("Welcome Sir! Just send me a video and You'll see, to download a youtube video just send the link, add t1:t2 after a space if you want to trim the video.")
+    await update.message.reply_text("Welcome Sir! Just send me a video and You'll see")
 
 async def handle_video(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg_id = update.message.id
@@ -39,26 +39,16 @@ async def handle_video(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     await update.message.reply_text("اختر الخيارات التي تريد تطبيقها ثم اضغط على تأكيد", reply_markup = InlineKeyboardMarkup(buttons))
     
 async def handle_url(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user_id = update.message.from_user.id
-    data = update.message.text.split(" ")
-    link = data[0]
-    cut = False
-    if len(data) == 2:
-        point1 = int(data[1].split(":")[0])
-        point2 = int(data[1].split(":")[1])
-        cut = True
-    elif len(data) > 2:
-        await update.message.reply_text(text="Error in Your message format!")
-        return 0
-
+    user_id = user_id = update.message.from_user.id
+    link = user_id = update.message.text
     file = YTdownload(user_id, link)
 
     if file:
-        if cut:
-            file = cut_video(id, file, point1, point2)
+        #file = cut_video(id, file, 20, 50)
+        file = edit_video(file, 1, 0, 0, 0)
         await update.message.reply_text(text="Done!")
         await update.message.reply_document(document=file)
-        os.remove(f'{file}')
+        #os.remove(f'{file}')
     
 
 
@@ -113,22 +103,28 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         added.append('-اضافة موسيقا تصويرية')
         buttons.remove([InlineKeyboardButton('اضافة موسيقا تصويرية', callback_data=f'{msg_id}&music')])
 
-    await context.bot.edit_message_text(chat_id=user_id, message_id=msg_id, text=f"الخيارات التي اخترتها:\n{'\n'.join(added)}\nاضغط على تأكيد عندما تنتهي من الاختيار..")
+    await context.bot.edit_message_text(chat_id=user_id, message_id=msg_id, text=f"الخيارات التي اخترتها:({' - '.join(added)}) اضغط على تأكيد عندما تنتهي من الاختيار..")
     await context.bot.edit_message_reply_markup(chat_id=user_id, message_id=msg_id, reply_markup = InlineKeyboardMarkup(buttons))
     
     if request_type == 'done':
         await context.bot.delete_message(update.callback_query.message.chat.id, update.callback_query.message.id)
         await context.bot.send_message(user_id, text='تجري معالجة طلبك..')
+        print(data[index])
         file = edit_video(user_id, data[index]["cutSilence"], data[index]["19:6"], data[index]["speedup"], data[index]["music"])
-
-
+        print(file)
+        await context.bot.send_message(user_id, text="Done!")
+        await context.bot.send_document(user_id, document=f'{file}')
+        
+        if data[index]["cutSilence"]:
+            os.remove(f'{id}_ALTERED.mp4')
+        if data[index]["speedup"]:
+            os.remove(f'{id}_ALTERED_ALTERED.mp4')
+        if data[index]["19:6"]:
+            os.remove(f'{file}')
+        
         data.pop(index)
         with open('users_data.json', 'w', encoding='utf-8') as outfile:
             json_data = json.dump(data, outfile, indent=4)
-
-        await context.bot.send_message(user_id, text="Done!")
-        await context.bot.send_video(user_id, video=f'{file}')
-        os.remove(f'{file}')
 
 
 
