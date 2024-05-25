@@ -44,11 +44,10 @@ async def handle_url(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     file = YTdownload(user_id, link)
 
     if file:
-        #file = cut_video(id, file, 20, 50)
         file = edit_video(file, 1, 0, 0, 0)
         await update.message.reply_text(text="Done!")
         await update.message.reply_document(document=file)
-        #os.remove(f'{file}')
+        os.remove(f'{file}')
     
 
 
