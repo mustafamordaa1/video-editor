@@ -39,15 +39,26 @@ async def handle_video(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     await update.message.reply_text("اختر الخيارات التي تريد تطبيقها ثم اضغط على تأكيد", reply_markup = InlineKeyboardMarkup(buttons))
     
 async def handle_url(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user_id = user_id = update.message.from_user.id
-    link = user_id = update.message.text
-    file = YTdownload(user_id, link)
+    user_id = update.message.from_user.id
+    msg = update.message.text
+    if len(msg.split(' ')) == 2:
+        link = msg.split(' ')[0]
+        start = msg.split(' ')[1].split(':')[0]
+        end = msg.split(' ')[1].split(':')[1]
+        file = YTdownload(user_id, link)
+    else:
+        link = msg
+        file = YTdownload(user_id, link)
 
     if file:
-        file = edit_video(file, 1, 0, 0, 0)
+        if len(msg.split(' ')) == 2:
+            cut_file = cut_video(user_id, file, start, end)
+        else:
+            cut_file = file
         await update.message.reply_text(text="Done!")
-        await update.message.reply_document(document=file)
+        await update.message.reply_video(video=file)
         os.remove(f'{file}')
+        os.remove(file)
     
 
 
@@ -112,12 +123,12 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         file = edit_video(user_id, data[index]["cutSilence"], data[index]["19:6"], data[index]["speedup"], data[index]["music"])
         print(file)
         await context.bot.send_message(user_id, text="Done!")
-        await context.bot.send_document(user_id, document=f'{file}')
+        await context.bot.send_video(user_id, video=f'{file}')
         
         if data[index]["cutSilence"]:
-            os.remove(f'{id}_ALTERED.mp4')
+            os.remove(f'{user_id}_ALTERED.mp4')
         if data[index]["speedup"]:
-            os.remove(f'{id}_ALTERED_ALTERED.mp4')
+            os.remove(f'{user_id}_ALTERED_ALTERED.mp4')
         if data[index]["19:6"]:
             os.remove(f'{file}')
         
