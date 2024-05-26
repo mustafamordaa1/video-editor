@@ -35,7 +35,6 @@ def cut_video(id, file, start, end):
     clip = clip.subclip(start, end) 
     clip.write_videofile(f'{id}-done.mp4')
 
-    os.remove(file)
     return f'{id}-done.mp4'
 
 def edit_video(id, cutSilence, ratio, speedup, music):
@@ -50,7 +49,7 @@ def edit_video(id, cutSilence, ratio, speedup, music):
     if speedup:
         clip = mpy.VideoFileClip(f'{filename}.mp4')
         duration = clip.duration 
-        os.system(f"auto-editor {filename}.mp4 --video-speed {(duration/60)} --silent-speed 99999")
+        os.system(f"auto-editor {filename}.mp4 --video-speed {(duration/58)} --silent-speed 99999")
 
         filename = f"{filename}_ALTERED"
         
@@ -79,15 +78,7 @@ def edit_video(id, cutSilence, ratio, speedup, music):
         final_clip.write_videofile(f'{id}-done.mp4')
 
         filename = f'{id}-done'
-    
-    '''
-    
-    if cutSilence and speedup:
-        os.remove(f'{id}_ALTERED_ALTERED.mp4')
-        os.remove(f'{id}_ALTERED.mp4')
-    elif cutSilence or speedup:
-        os.remove(f'{id}_ALTERED.mp4')
-'''        
+          
     os.remove(f'{id}.mp4')
 
     return f'{filename}.mp4'
